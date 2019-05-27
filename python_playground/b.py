@@ -14,5 +14,5 @@ for k in range(N):
     a = complex(0, 0)
     for n in range(N):
         a += 0.5 * (np.exp(p * n * (t - k / N)) + np.exp(-p * n * (t + k / N)))
-    print((a.real))
+    print(a.real)
     print('=========')
