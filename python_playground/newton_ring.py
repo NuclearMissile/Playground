@@ -38,7 +38,7 @@ root.wm_protocol("WM_DELETE_WINDOW", root.quit)
 
 labda = 530 * nm;
 size = 5 * mm;
-N = 300
+N = 600
 
 R = 150 * cm
 
@@ -93,10 +93,14 @@ def TheExample(event):
 def motion(event):
     x = event.xdata
     y = event.ydata
-    if (x and y is not None and x > 0 and x < N and y > 0 and y < N):
-        v.set('x=%3.2f mm, y=%3.2f mm\n I=%3.3f [a.u.]' % (
-            (-size / 2 + x * size / N) / mm, (-size / 2 + y * size / N) / mm, I[int(x)][int(y)]))
-        root.configure(cursor='crosshair')
+    if x and y is not None and 0 < x < N and y > 0:
+        if y < N:
+            v.set('x=%3.2f mm, y=%3.2f mm\n I=%3.3f [a.u.]' % (
+                (-size / 2 + x * size / N) / mm, (-size / 2 + y * size / N) / mm, I[int(x)][int(y)]))
+            root.configure(cursor='crosshair')
+        else:
+            v.set('')
+            root.configure(cursor='arrow')
     else:
         v.set('')
         root.configure(cursor='arrow')
