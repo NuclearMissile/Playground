@@ -11,7 +11,7 @@ def lambda2RGB(wavelength, gamma=0.8) -> (float, float, float):
         attenuation = 0.3 + 0.7 * (wavelength - 380) / (440 - 380)
         R = ((440 - wavelength) / (440 - 380)) * attenuation
         G = 0.0
-        B = (1.0 * attenuation) ** gamma
+        B = 1.0 * attenuation
     elif 440 <= wavelength <= 490:
         R = 0.0
         G = (wavelength - 440) / (490 - 440)
@@ -60,7 +60,7 @@ def render(R=1.5, lam=380e-9, size=5e-3, N=801):
 
     for i in range(N):
         for j in range(N):
-            matrix[i][j] = math.sin(2 * PI * (R - math.sqrt(R ** 2 - r(i, j) ** 2)) / lam) ** 2
+            matrix[i][j] = math.sin(PI * r(i, j) ** 2 / R / lam) ** 2
 
     plt.figure(figsize=(8, 8))
     plt.imshow(matrix, cmap=genCmap())
