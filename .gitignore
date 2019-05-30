@@ -13,6 +13,7 @@
 *.userprefs
 venv/
 pkg/
+python_playground/*.png
 
 # Build results
 [Dd]ebug/
