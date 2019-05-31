@@ -65,11 +65,12 @@ def print_path(parent):
 def a_star(graph, start, end):
     OPEN, g, f, parent, CLOSED = [], {start: 0}, {start: graph[start]['h']}, {}, set()
     heapq.heappush(OPEN, (f[start], start))
-    OPEN_track, CLOSED_track, f_tarck, v_track = [], [], [], []
+    OPEN_track, CLOSED_track, f_tarck, v_track, g_track = [], [], [], [], []
     while True:
         OPEN_track.append(OPEN.copy())
         CLOSED_track.append(CLOSED.copy())
         f_tarck.append(f.copy())
+        g_track.append(g.copy())
         if len(OPEN) == 0:
             return
         v = heapq.heappop(OPEN)[-1]
@@ -79,8 +80,12 @@ def a_star(graph, start, end):
             print_path(parent)
             print('==============')
             for i in range(len(OPEN_track)):
-                print(f'round:  {i}')
-                print(f'v:      {v_track[i]}\nOPEN:   {OPEN_track[i]},\nCLOSED: {CLOSED_track[i]},\nf_vals: {f_tarck[i]}\n')
+                print(f'round:  {i}\n'
+                      f'v:      {v_track[i]}\n'
+                      f'OPEN:   {OPEN_track[i]}\n'
+                      f'CLOSED: {CLOSED_track[i]}\n'
+                      f'f_vals: {f_tarck[i]}\n'
+                      f'g_vals: {g_track[i]}\n')
             return
         for u, cost in graph[v]['edges'].items():
             if (f.get(u, -1), u) not in OPEN and u not in CLOSED:

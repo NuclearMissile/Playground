@@ -24,6 +24,7 @@ def f1(n, xx):
 def f2(n, xx):
     return ((2 * (-1) ** (n + 1) + 2) / (n * np.pi)) * np.sin(2 * n * xx)
 
+
 for i in range(3, 15, 2):
     show_plot(f1, i, 'f1')
     show_plot(f2, i, 'f2')
