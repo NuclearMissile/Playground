@@ -8,11 +8,16 @@ type T struct {
 
 func change(t *T) {
 	tt := T{"abc"}
+	*t = tt
 	t = &tt
 }
 
 func main() {
-	t := T{"123"}
-	change(&t)
-	fmt.Println(t)
+	var i *int
+	i = new(int)
+	*i = 1000
+	fmt.Println(*i)
+	/*	t := T{"123"}
+		change(&t)
+		fmt.Println(t)*/
 }

@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	PrintDirTree(`E:/Green/AIMP`)
+	PrintDirTree(`D:/AIMP`)
 }
 
 func PrintDirTree(root string) {
-	sb := strings.Builder{}
-	printDirTree(root, 0, &sb)
+	sb := new(strings.Builder)
+	printDirTree(root, 0, sb)
 	fmt.Println(sb.String())
 }
 
