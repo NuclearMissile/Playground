@@ -39,8 +39,8 @@ def example():
     R = np.array([0.5]).reshape(1, 1)
     x = np.linspace(-10, 10, 100)
 
-    real = -(x ** 2 + 2 * x - 2)
-    measurements = -(x ** 2 + 2 * x - 2) + np.random.normal(0, 2, 100)
+    real = -(-x ** 2 + x - 2)
+    measurements = real + np.random.normal(0, 10, 100)
 
     kf = Kalman(F, H, Q=Q, R=R)
     pred = []
