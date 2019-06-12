@@ -1,70 +1,72 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"errors"
 	"fmt"
 	"math/big"
 )
 
+func String2BigInt(s *string) *big.Int {
+	var number, temp big.Int
+	for _, b := range []byte(*s) {
+		number.Or(number.Lsh(&number, 8), temp.SetInt64(int64(b)))
+	}
+	return &number
+}
+
+func BigInt2String(n *big.Int) *string {
+	var db [16]byte
+	var temp big.Int
+	dx := 16
+	bff := big.NewInt(0xff)
+	for n.BitLen() > 0 {
+		dx--
+		db[dx] = byte(temp.And(n, bff).Int64())
+		n.Rsh(n, 8)
+	}
+	s := string(db[dx:])
+	return &s
+}
+
+func RSAEncrypt(plain *string, e, n *big.Int) (*big.Int, error) {
+	pAsBigInt := String2BigInt(plain)
+	if pAsBigInt.Cmp(n) >= 0 {
+		return nil, errors.New("Plain text too long. ")
+	}
+	var encrypted big.Int
+	encrypted.Exp(pAsBigInt, e, n)
+	return &encrypted, nil
+}
+
+func RSADecrypt(encrypted, d, n *big.Int) *string {
+	var temp big.Int
+	temp.Exp(encrypted, d, n)
+	return BigInt2String(&temp)
+}
+
 func main() {
-	var n, e, d, bb, ptn, etn, dtn big.Int
+	pkey, _ := rsa.GenerateKey(rand.Reader, 1024)
+	n := pkey.N
+	e := big.NewInt(int64(pkey.E))
+	d := pkey.D
+
 	plain := "Hello, World!"
 	fmt.Println("Plain text:")
 	fmt.Println(plain)
 
-	n.SetString("9516311845790656153499716760847001433441357", 10)
-	e.SetString("65537", 10)
-	d.SetString("5617843187844953170308463622230283376298685", 10)
-
-	for _, b := range []byte(plain) {
-		ptn.Or(ptn.Lsh(&ptn, 8), bb.SetInt64(int64(b)))
-	}
-	if ptn.Cmp(&n) >= 0 {
-		fmt.Println("Plain text too long.")
-		return
-	}
+	plainAsBigInt := String2BigInt(&plain)
 	fmt.Println("Plain text as number:")
-	fmt.Println(&ptn)
-	etn.Exp(&ptn, &e, &n)
-	fmt.Println("Encoded:")
-	fmt.Println(&etn)
-	dtn.Exp(&etn, &d, &n)
-	fmt.Println("Decoded::")
-	fmt.Println(&dtn)
+	fmt.Println(plainAsBigInt.String())
 
-	var db [16]byte
-	dx := 16
-	bff := big.NewInt(0xff)
-	for dtn.BitLen() > 0 {
-		dx--
-		db[dx] = byte(bb.And(&dtn, bff).Int64())
-		dtn.Rsh(&dtn, 8)
+	fmt.Println("Encrypted:")
+	encrypted, err := RSAEncrypt(&plain, e, n)
+	if err != nil {
+		panic(err)
 	}
-	fmt.Println("Decoded text:")
-	fmt.Println(string(db[dx:]))
+	fmt.Println(encrypted.String())
+
+	fmt.Println("Decrypted:")
+	fmt.Println(*RSADecrypt(encrypted, d, n))
 }
-
-/*func main() {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
-	if err != nil {
-		fmt.Printf("rsa.GenerateKey: %v\n", err)
-	}
-
-	message := "Hello World!"
-	messageBytes := bytes.NewBufferString(message)
-	sha1 := sha1.New()
-
-	encrypted, err := rsa.EncryptOAEP(sha1, rand.Reader, &privateKey.PublicKey, messageBytes.Bytes(), nil)
-	if err != nil {
-		fmt.Printf("EncryptOAEP: %s\n", err)
-	}
-
-	decrypted, err := rsa.DecryptOAEP(sha1, rand.Reader, privateKey, encrypted, nil)
-	if err != nil {
-		fmt.Printf("decrypt: %s\n", err)
-	}
-
-	decryptedString := bytes.NewBuffer(decrypted).String()
-	fmt.Printf("message: %v\n", message)
-	fmt.Printf("encrypted: %v\n", encrypted)
-	fmt.Printf("decryptedString: %v\n", decryptedString)
-}*/
