@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
+	"github.com/NuclearMissile/Playground/go_playground/Mont"
 	"math/big"
 )
 
@@ -35,15 +36,16 @@ func RSAEncrypt(plain *string, e, n *big.Int) (*big.Int, error) {
 	if pAsBigInt.Cmp(n) >= 0 {
 		return nil, errors.New("Plain text too long. ")
 	}
-	var encrypted big.Int
-	encrypted.Exp(pAsBigInt, e, n)
-	return &encrypted, nil
+	//var encrypted big.Int
+	//encrypted.Exp(pAsBigInt, e, n)
+	return Mont.Exp(pAsBigInt, e, n), nil
 }
 
 func RSADecrypt(encrypted, d, n *big.Int) *string {
-	var temp big.Int
-	temp.Exp(encrypted, d, n)
-	return BigInt2String(&temp)
+	//var temp big.Int
+	//temp.Exp(encrypted, d, n)
+	temp := Mont.Exp(encrypted, d, n)
+	return BigInt2String(temp)
 }
 
 func main() {
