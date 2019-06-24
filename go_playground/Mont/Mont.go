@@ -33,17 +33,17 @@ func newMont(m *big.Int) *mont {
 }
 
 func Exp(x, y, m *big.Int) *big.Int {
-	mont := newMont(m)
-	t1 := new(big.Int).Mul(x, mont.r2)
-	prod := mont.redc(mont.r2)
-	base := mont.redc(t1.Mul(x, mont.r2))
+	mm := newMont(m)
+	t1 := new(big.Int).Mul(x, mm.r2)
+	prod := mm.redc(mm.r2)
+	base := mm.redc(t1.Mul(x, mm.r2))
 	exp := new(big.Int).Set(y)
 	for exp.BitLen() > 0 {
 		if exp.Bit(0) == 1 {
-			prod = mont.redc(prod.Mul(prod, base))
+			prod = mm.redc(prod.Mul(prod, base))
 		}
 		exp.Rsh(exp, 1)
-		base = mont.redc(base.Mul(base, base))
+		base = mm.redc(base.Mul(base, base))
 	}
-	return mont.redc(prod)
+	return mm.redc(prod)
 }

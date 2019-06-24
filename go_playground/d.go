@@ -27,7 +27,7 @@ func main() {
 		return res
 	}
 
-	montTest := func(a, R, N *big.Int) *big.Int { return empty().Mod(empty().Mul(a, R), N) }
+	// montTest := func(a, R, N *big.Int) *big.Int { return empty().Mod(empty().Mul(a, R), N) }
 
 	leftBinExp := func(x, y *big.Int) *big.Int {
 		flag := empty().Lsh(toBig(1), uint(y.BitLen()-1))
@@ -56,8 +56,8 @@ func main() {
 	} // x^y%m
 
 	montREDC := func(T, NP, R, N *big.Int) *big.Int {
-		m := empty().Mod(empty().Mul(empty().Mod(T, R), NP), R)
-		res := empty().Div(empty().Add(T, empty().Mul(m, N)), R)
+		m := leftBinExpMod(empty().Mul(leftBinExpMod(T, toBig(1), R), NP), toBig(1), R)
+		res := empty().Rsh(empty().Add(T, empty().Mul(m, N)), 256)
 		if res.Cmp(N) >= 0 {
 			return empty().Sub(res, N)
 		} else {
@@ -75,7 +75,7 @@ func main() {
 	N, _ := empty().SetString("16798108731015832284940804142231733909889187121439069848933715426072753864723", 10)
 	R := empty().Exp(toBig(2), toBig(256), nil)
 	NP := np(R, N)
-	RModN := leftBinExpMod(R, toBig(1), N)
+	//RModN := leftBinExpMod(R, toBig(1), N)
 	R2ModN := leftBinExpMod(R, toBig(2), N)
 	MONT2 := montREDC(empty().Mul(toBig(2), R2ModN), NP, R, N)
 	MONT3 := montREDC(empty().Mul(toBig(3), R2ModN), NP, R, N)
@@ -83,26 +83,32 @@ func main() {
 
 	fmt.Printf("N:\n%x\n", N)
 	fmt.Printf("N':\n%x\n", NP)
-	fmt.Println("RModN:")
-	fmt.Printf("%x\n", RModN)
+	//fmt.Println("RModN:")
+	//fmt.Printf("%x\n", RModN)
 	fmt.Println("R^2ModN:")
 	fmt.Printf("%x\n", R2ModN)
 
 	fmt.Println("2 mont:")
 	fmt.Printf("%x\n", MONT2)
 	fmt.Println("convert mont2 to int:")
-	fmt.Printf("%d\n", montREDC(empty().Mul(MONT2, R), NP, R, N))
+	fmt.Printf("%d\n", montREDC(MONT2, NP, R, N))
 	fmt.Println("3 mont:")
 	fmt.Printf("%x\n", MONT3)
+	fmt.Println("convert mont3 to int:")
+	fmt.Printf("%d\n", montREDC(MONT3, NP, R, N))
+	fmt.Println("6 mont:")
+	fmt.Printf("%x\n", MONT6)
 	fmt.Println("3 + 3 mont:")
-	fmt.Printf("Test: %x\n", MONT6)
+	fmt.Printf("%x\n", leftBinExpMod(empty().Add(MONT3, MONT3), toBig(1), N))
 	fmt.Println("2 * 3 mont:")
-	fmt.Printf("Test: %x\n", montTest(toBig(2*3), R, N))
+	fmt.Printf("%x\n", leftBinExpMod(empty().Mul(MONT3, toBig(2)), toBig(1), N))
+	fmt.Println("convert mont6 to int:")
+	fmt.Printf("%d\n", montREDC(MONT6, NP, R, N))
 	fmt.Println("======================================")
 	fmt.Println("leftBin(2, 3):")
 	fmt.Println(leftBinExp(toBig(2), toBig(3)))
-	fmt.Println("leftBinExpMod(2, 3, 3):")
-	fmt.Println(leftBinExpMod(toBig(2), toBig(3), toBig(3)))
+	fmt.Println("leftBinExpMod(2, 1, 3):")
+	fmt.Println(leftBinExpMod(toBig(2), toBig(1), toBig(3)))
 	fmt.Println("leftBinExpMod(2, 40710, N):")
 	fmt.Printf("%d\n", leftBinExpMod(toBig(2), toBig(40710), N))
 }
