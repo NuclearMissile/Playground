@@ -101,7 +101,7 @@ func main() {
 	fmt.Println("3 + 3 mont:")
 	fmt.Printf("%x\n", leftBinExpMod(empty().Add(MONT3, MONT3), toBig(1), N))
 	fmt.Println("2 * 3 mont:")
-	fmt.Printf("%x\n", leftBinExpMod(empty().Mul(MONT3, toBig(2)), toBig(1), N))
+	fmt.Printf("%x\n", leftBinExpMod(empty().Mul(MONT2, toBig(3)), toBig(1), N))
 	fmt.Println("convert mont6 to int:")
 	fmt.Printf("%d\n", montREDC(MONT6, NP, R, N))
 	fmt.Println("======================================")
