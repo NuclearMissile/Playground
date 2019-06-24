@@ -8,7 +8,7 @@ type mont struct {
 	r2 *big.Int // (1 << 2n) % m
 }
 
-func (m *mont) reduce(t *big.Int) *big.Int {
+func (m *mont) redc(t *big.Int) *big.Int {
 	temp := new(big.Int).Set(t)
 	for i := uint(0); i < m.n; i++ {
 		if temp.Bit(0) == 1 {
@@ -33,18 +33,17 @@ func newMont(m *big.Int) *mont {
 }
 
 func Exp(x, y, m *big.Int) *big.Int {
-	mr := newMont(m)
-	t1 := new(big.Int).Mul(x, mr.r2)
-	prod := mr.reduce(mr.r2)
-	base := mr.reduce(t1.Mul(x, mr.r2))
+	mont := newMont(m)
+	t1 := new(big.Int).Mul(x, mont.r2)
+	prod := mont.redc(mont.r2)
+	base := mont.redc(t1.Mul(x, mont.r2))
 	exp := new(big.Int).Set(y)
 	for exp.BitLen() > 0 {
 		if exp.Bit(0) == 1 {
-			prod = mr.reduce(prod.Mul(prod, base))
+			prod = mont.redc(prod.Mul(prod, base))
 		}
 		exp.Rsh(exp, 1)
-		base = mr.reduce(base.Mul(base, base))
+		base = mont.redc(base.Mul(base, base))
 	}
-	return mr.reduce(prod)
-	//return new(big.Int).Exp(x, y, m)
+	return mont.redc(prod)
 }
