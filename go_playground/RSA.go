@@ -58,13 +58,15 @@ func main() {
 	fmt.Println("Plain text as number:")
 	fmt.Println(plainAsBigInt.String())
 
-	fmt.Println("Encrypted:")
-	encrypted, err := RSAEncrypt(&plain, e, n)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(encrypted.String())
+	for i := 0; i < 50; i++ {
+		fmt.Println("=============\nEncrypted:")
+		encrypted, err := RSAEncrypt(&plain, e, n)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(encrypted.String())
 
-	fmt.Println("Decrypted:")
-	fmt.Println(*RSADecrypt(encrypted, d, n))
+		fmt.Println("=============\nDecrypted:")
+		fmt.Println(*RSADecrypt(encrypted, d, n))
+	}
 }

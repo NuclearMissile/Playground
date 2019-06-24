@@ -75,7 +75,6 @@ func main() {
 	N, _ := empty().SetString("16798108731015832284940804142231733909889187121439069848933715426072753864723", 10)
 	R := empty().Exp(toBig(2), toBig(256), nil)
 	NP := np(R, N)
-	//RModN := leftBinExpMod(R, toBig(1), N)
 	R2ModN := leftBinExpMod(R, toBig(2), N)
 	MONT2 := montREDC(empty().Mul(toBig(2), R2ModN), NP, R, N)
 	MONT3 := montREDC(empty().Mul(toBig(3), R2ModN), NP, R, N)
@@ -83,8 +82,6 @@ func main() {
 
 	fmt.Printf("N:\n%x\n", N)
 	fmt.Printf("N':\n%x\n", NP)
-	//fmt.Println("RModN:")
-	//fmt.Printf("%x\n", RModN)
 	fmt.Println("R^2ModN:")
 	fmt.Printf("%x\n", R2ModN)
 
