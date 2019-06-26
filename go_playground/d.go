@@ -56,14 +56,19 @@ func main() {
 	} // x^y%m
 
 	montREDC := func(T, NP, R, N *big.Int) *big.Int {
-		m := leftBinExpMod(empty().Mul(leftBinExpMod(T, toBig(1), R), NP), toBig(1), R)
-		res := empty().Rsh(empty().Add(T, empty().Mul(m, N)), 256)
-		if res.Cmp(N) >= 0 {
-			return empty().Sub(res, N)
-		} else {
-			return res
-		}
-	} // T/R%N
+		return empty().Rsh(empty().Add(T, empty().Mul(empty().And(empty().Mul(T, NP),
+			empty().Sub(R, toBig(1))), N)), uint(R.BitLen()-1))
+	} // (T+(T*NP&(R-1))*N) >> 256
+
+	//montREDC := func(T, NP, R, N *big.Int) *big.Int {
+	//	m := leftBinExpMod(empty().Mul(leftBinExpMod(T, toBig(1), R), NP), toBig(1), R)
+	//	res := empty().Rsh(empty().Add(T, empty().Mul(m, N)), 256)
+	//	if res.Cmp(N) >= 0 {
+	//		return empty().Sub(res, N)
+	//	} else {
+	//		return res
+	//	}
+	//} // T/R%N
 
 	/*U := empty().Neg(empty().Add(empty().Add(empty().Exp(toBig(2), big.NewInt(62), nil),
 		empty().Exp(toBig(2), big.NewInt(55), nil)), big.NewInt(1)))
@@ -81,7 +86,6 @@ func main() {
 	MONT6 := montREDC(empty().Mul(toBig(6), R2ModN), NP, R, N)
 
 	fmt.Printf("N:\n%x\n", N)
-	fmt.Println(N.BitLen())
 	fmt.Printf("N':\n%x\n", NP)
 	fmt.Println("R^2ModN:")
 	fmt.Printf("%x\n", R2ModN)
