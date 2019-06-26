@@ -81,6 +81,7 @@ func main() {
 	MONT6 := montREDC(empty().Mul(toBig(6), R2ModN), NP, R, N)
 
 	fmt.Printf("N:\n%x\n", N)
+	fmt.Println(N.BitLen())
 	fmt.Printf("N':\n%x\n", NP)
 	fmt.Println("R^2ModN:")
 	fmt.Printf("%x\n", R2ModN)
