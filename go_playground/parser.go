@@ -7,8 +7,14 @@ import (
 )
 
 func main() {
-	expr, _ := parser.Parse("sin(pi/6)")
-	env := parser.Env{}
-	env["pi"] = math.Pi
+	expr, err := parser.Parse("sin(pi/6)")
+	fmt.Println(expr)
+	if err != nil {
+		fmt.Println(err)
+	}
+	env := parser.Env{
+		"pi": math.Pi,
+		"e":  math.E,
+	}
 	fmt.Println(expr.Eval(env))
 }

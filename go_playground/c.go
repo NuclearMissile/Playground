@@ -1,23 +1,30 @@
 package main
 
-import "fmt"
-
-type T struct {
-	s string
-}
-
-func change(t *T) {
-	tt := T{"abc"}
-	*t = tt
-	t = &tt
-}
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
-	var i *int
-	i = new(int)
-	*i = 1000
-	fmt.Println(*i)
-	/*	t := T{"123"}
-		change(&t)
-		fmt.Println(t)*/
+	go spinner(200 * time.Millisecond)
+	const n = 45
+	fibN := fib(n) // slow
+	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)
+}
+
+func spinner(delay time.Duration) {
+	for {
+		for _, r := range `-\|/` {
+			time.Sleep(delay)
+			fmt.Printf("\r%c", r)
+			time.Sleep(delay)
+		}
+	}
+}
+
+func fib(x int) int {
+	if x < 2 {
+		return x
+	}
+	return fib(x-1) + fib(x-2)
 }

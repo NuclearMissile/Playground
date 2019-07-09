@@ -6,7 +6,11 @@ import (
 )
 
 func (v Var) Eval(env Env) float64 {
-	return env[v]
+	if value, ok := env[v]; ok {
+		return value
+	} else {
+		panic(fmt.Sprintf("%s not found in env", v))
+	}
 }
 
 func (l literal) Eval(env Env) float64 {
