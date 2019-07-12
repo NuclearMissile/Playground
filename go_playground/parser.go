@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	expr, err := parser.Parse("sin(pi/6)")
+	expr, err := parser.Parse("sin(pi/6)+ln(e)")
 	fmt.Println(expr)
 	if err != nil {
 		fmt.Println(err)
