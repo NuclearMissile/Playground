@@ -10,5 +10,5 @@ func (m Matrix) Move(step Step) bool {
 }
 
 func (np *NPuzzle) Solve() {
-
+	return
 }
