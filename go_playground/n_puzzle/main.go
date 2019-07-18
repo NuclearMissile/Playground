@@ -17,14 +17,14 @@ func init() {
 
 func main() {
 	flag.Parse()
-	fmt.Println("--------N Puzzle--------")
-	fmt.Printf("verbose: %t, n: %d\n", v, n)
-	fmt.Println("------------------------")
 	np, err := Init(n)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	np.Solve()
+
+	fmt.Printf("--------%d Puzzle--------\n", n)
+	fmt.Printf("verbose: %t, n: %d, init pos: (%d, %d)\n", v, n, np.CurrX, np.CurrY)
+	fmt.Println("------------------------")
 	fmt.Println(np.String())
 }
