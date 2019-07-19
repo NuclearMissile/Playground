@@ -11,7 +11,6 @@ type Matrix [][]int
 type NPuzzle struct {
 	CurrMatrix   Matrix
 	InitMatrix   Matrix
-	Size         int
 	Steps        []Step
 	CurrX, CurrY int
 	fmt.Stringer
@@ -21,28 +20,6 @@ type NPuzzle struct {
 type Step struct {
 	X1, Y1, X2, Y2 int
 	fmt.Stringer
-}
-
-func (s *Step) Reverse() *Step {
-	ns := new(Step)
-	ns.X1 = s.X2
-	ns.Y1 = s.Y2
-	ns.X2 = s.X1
-	ns.Y2 = s.Y1
-	return ns
-}
-
-func (np *NPuzzle) Reset() *NPuzzle {
-	np.CurrMatrix = deepCopy(np.InitMatrix)
-	np.Steps = make([]Step, 0, 16)
-	return np
-}
-
-func (np *NPuzzle) Move(s *Step) {
-	np.CurrMatrix.move(s)
-	np.CurrX = s.X2
-	np.CurrY = s.Y2
-	np.Steps = append(np.Steps, *s)
 }
 
 func (m Matrix) posOf0() (currX, currY int) {
@@ -56,13 +33,33 @@ func (m Matrix) posOf0() (currX, currY int) {
 	panic("")
 }
 
+func (np *NPuzzle) Reset() *NPuzzle {
+	np.CurrMatrix = deepCopy(np.InitMatrix)
+	np.Steps = make([]Step, 0, 16)
+	np.CurrX, np.CurrY = np.CurrMatrix.posOf0()
+	return np
+}
+
+func (np *NPuzzle) Move(s *Step) {
+	if !s.validate(np.CurrMatrix, nil) {
+		panic(s)
+	}
+	np.CurrMatrix.exchange(s)
+	np.CurrX = s.X2
+	np.CurrY = s.Y2
+	np.Steps = append(np.Steps, *s)
+}
+
+func (s *Step) String() string {
+	return fmt.Sprintf("From (%d, %d) to (%d, %d)", s.X1, s.Y1, s.X2, s.Y2)
+}
+
 func (np *NPuzzle) fmtSteps() string {
 	sb := strings.Builder{}
 	tempM := deepCopy(np.InitMatrix)
 	for index, step := range np.Steps {
-		sb.WriteString(fmt.Sprintf("Step %d: Move from (%d, %d) to (%d, %d).\n", index,
-			step.X1, step.Y1, step.X2, step.Y2))
-		tempM.move(&step)
+		sb.WriteString(fmt.Sprintf("Step %d: %s.\n", index, step))
+		tempM.exchange(&step)
 		sb.WriteString(tempM.String())
 	}
 	return sb.String()
@@ -117,7 +114,6 @@ func Init(size int) (*NPuzzle, error) {
 	//fmt.Printf("Size:          %p\n", &np.Size)
 	//fmt.Printf("Steps:         %p\n", &np.Steps)
 
-	np.Size = size
 	np.Steps = make([]Step, 0, 16)
 	return np, nil
 }

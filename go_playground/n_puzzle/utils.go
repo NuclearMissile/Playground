@@ -59,28 +59,29 @@ func euclid(s *Step) float64 {
 	return math.Sqrt(math.Pow(float64(s.X1-s.X2), 2) + math.Pow(float64(s.Y1-s.Y2), 2))
 }
 
-func (s *Step) validate(m Matrix) bool {
+func (s *Step) validate(m Matrix, lastStep *Step) bool {
 	sizeY := len(m)
 	sizeX := len(m[0])
+
+	if lastStep != nil && ((s.X1 == lastStep.X1 && s.X2 == lastStep.X2 && s.Y1 == lastStep.Y1 && s.Y2 == lastStep.Y2) ||
+		(s.X1 == lastStep.X2 && s.Y1 == lastStep.Y2 && s.X2 == lastStep.X1 && s.Y2 == lastStep.Y1)) {
+		return false
+	}
+
 	if s.X1 < 0 || s.X1 > sizeX-1 || s.X2 < 0 || s.X2 > sizeX-1 || s.Y1 < 0 || s.Y1 > sizeY-1 || s.Y2 < 0 || s.Y2 > sizeY-1 {
 		return false
 	}
 	if m[s.Y1][s.X1] != 0 || int(manhattan(s)) != 1 {
-		return false
+		panic(s)
 	}
 	return true
 }
 
-func (m Matrix) move(step *Step) {
-	if !step.validate(m) {
-		panic(step)
-	}
-	m[step.Y1][step.X1], m[step.Y2][step.X2] =
-		m[step.Y2][step.X2], m[step.Y1][step.X1]
+func (m Matrix) exchange(step *Step) {
+	m[step.Y1][step.X1], m[step.Y2][step.X2] = m[step.Y2][step.X2], m[step.Y1][step.X1]
 }
 
 func objFuncHelper(m Matrix, fn func(*Step) float64) []float64 {
-	//m.move(s)
 	sizeY := len(m)
 	sizeX := len(m[0])
 	res := make([]float64, 0, sizeX*sizeY)
@@ -98,7 +99,6 @@ func objFuncHelper(m Matrix, fn func(*Step) float64) []float64 {
 			res = append(res, fn(&s))
 		}
 	}
-	//m.move(s.Reverse())
 	return res
 }
 
@@ -107,7 +107,7 @@ func norm1(l []float64) float64 {
 	for _, i := range l {
 		res += i
 	}
-	return float64(res)
+	return res
 }
 
 func norm2(l []float64) float64 {
@@ -115,7 +115,21 @@ func norm2(l []float64) float64 {
 	for _, i := range l {
 		res += i * i
 	}
-	return math.Sqrt(float64(res))
+	return math.Sqrt(res)
+}
+
+func norm0(l []float64) float64 {
+	var res float64
+	for _, i := range l {
+		if int(i) != 0 {
+			res += 1
+		}
+	}
+	return res
+}
+
+func MNorm0(m Matrix) float64 {
+	return norm0(objFuncHelper(m, manhattan))
 }
 
 func MNorm1(m Matrix) float64 {
