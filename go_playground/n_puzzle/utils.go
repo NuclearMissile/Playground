@@ -59,34 +59,46 @@ func euclid(s *Step) float64 {
 	return math.Sqrt(math.Pow(float64(s.X1-s.X2), 2) + math.Pow(float64(s.Y1-s.Y2), 2))
 }
 
-func (m Matrix) move(step *Step) bool {
-	if m[step.Y1][step.X1] != 0 || manhattan(step) != 1 {
+func (s *Step) validate(m Matrix) bool {
+	sizeY := len(m)
+	sizeX := len(m[0])
+	if s.X1 < 0 || s.X1 > sizeX-1 || s.X2 < 0 || s.X2 > sizeX-1 || s.Y1 < 0 || s.Y1 > sizeY-1 || s.Y2 < 0 || s.Y2 > sizeY-1 {
 		return false
 	}
-	m[step.Y1][step.X1], m[step.Y2][step.X2] =
-		m[step.Y2][step.X2], m[step.Y1][step.X1]
+	if m[s.Y1][s.X1] != 0 || int(manhattan(s)) != 1 {
+		return false
+	}
 	return true
 }
 
-func helper(m Matrix, s *Step, fn func(*Step) float64) []float64 {
-	m.move(s)
-	size := len(m)
-	res := make([]float64, 0, size*size)
+func (m Matrix) move(step *Step) {
+	if !step.validate(m) {
+		panic(step)
+	}
+	m[step.Y1][step.X1], m[step.Y2][step.X2] =
+		m[step.Y2][step.X2], m[step.Y1][step.X1]
+}
+
+func objFuncHelper(m Matrix, fn func(*Step) float64) []float64 {
+	//m.move(s)
+	sizeY := len(m)
+	sizeX := len(m[0])
+	res := make([]float64, 0, sizeX*sizeY)
 	for indexi, i := range m {
 		for indexj, j := range i {
 			var targetX, targetY int
 			if j == 0 {
-				targetX, targetY = size-1, size-1
+				targetX, targetY = sizeX-1, sizeY-1
 			} else {
-				targetY = int(j / size)
-				targetX = j%size - 1
+				targetY = int(j / sizeX)
+				targetX = j%sizeX - 1
 			}
 			s := Step{}
 			s.X1, s.Y1, s.X2, s.Y2 = indexj, indexi, targetX, targetY
 			res = append(res, fn(&s))
 		}
 	}
-	m.move(s.Reverse())
+	//m.move(s.Reverse())
 	return res
 }
 
@@ -106,18 +118,18 @@ func norm2(l []float64) float64 {
 	return math.Sqrt(float64(res))
 }
 
-func MNorm1(m Matrix, s *Step) float64 {
-	return norm1(helper(m, s, manhattan))
+func MNorm1(m Matrix) float64 {
+	return norm1(objFuncHelper(m, manhattan))
 }
 
-func MNorm2(m Matrix, s *Step) float64 {
-	return norm2(helper(m, s, manhattan))
+func MNorm2(m Matrix) float64 {
+	return norm2(objFuncHelper(m, manhattan))
 }
 
-func ENorm1(m Matrix, s *Step) float64 {
-	return norm1(helper(m, s, euclid))
+func ENorm1(m Matrix) float64 {
+	return norm1(objFuncHelper(m, euclid))
 }
 
-func ENorm2(m Matrix, s *Step) float64 {
-	return norm2(helper(m, s, euclid))
+func ENorm2(m Matrix) float64 {
+	return norm2(objFuncHelper(m, euclid))
 }

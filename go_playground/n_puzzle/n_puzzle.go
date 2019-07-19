@@ -15,7 +15,7 @@ type NPuzzle struct {
 	Steps        []Step
 	CurrX, CurrY int
 	fmt.Stringer
-	Evaluate func(m Matrix, s *Step) float64
+	ObjFunc func(m Matrix) float64
 }
 
 type Step struct {
@@ -38,17 +38,14 @@ func (np *NPuzzle) Reset() *NPuzzle {
 	return np
 }
 
-func (np *NPuzzle) Move(s *Step) bool {
-	ok := np.CurrMatrix.move(s)
-	if !ok {
-		return false
-	}
+func (np *NPuzzle) Move(s *Step) {
+	np.CurrMatrix.move(s)
 	np.CurrX = s.X2
 	np.CurrY = s.Y2
-	return true
+	np.Steps = append(np.Steps, *s)
 }
 
-func (m Matrix) Pos() (currX, currY int) {
+func (m Matrix) posOf0() (currX, currY int) {
 	for indexi, i := range m {
 		for indexj, j := range i {
 			if j == 0 {
@@ -59,15 +56,13 @@ func (m Matrix) Pos() (currX, currY int) {
 	panic("")
 }
 
-func (np *NPuzzle) FmtSteps() string {
+func (np *NPuzzle) fmtSteps() string {
 	sb := strings.Builder{}
 	tempM := deepCopy(np.InitMatrix)
 	for index, step := range np.Steps {
 		sb.WriteString(fmt.Sprintf("Step %d: Move from (%d, %d) to (%d, %d).\n", index,
 			step.X1, step.Y1, step.X2, step.Y2))
-		if !tempM.move(&step) {
-			panic("")
-		}
+		tempM.move(&step)
 		sb.WriteString(tempM.String())
 	}
 	return sb.String()
@@ -82,7 +77,7 @@ func (np *NPuzzle) String() string {
 	if len(np.Steps) != 0 {
 		sb.WriteString(fmt.Sprintf("Total steps: %d\n", len(np.Steps)))
 		if v {
-			sb.WriteString(np.FmtSteps())
+			sb.WriteString(np.fmtSteps())
 		}
 	}
 	return sb.String()
@@ -96,15 +91,11 @@ func (m Matrix) String() string {
 	return sb.String()
 }
 
-func (np *NPuzzle) IsSolved() bool {
-	for indexi, i := range np.CurrMatrix {
-		offset := indexi * np.Size
+func (m Matrix) isGoal() bool {
+	for indexi, i := range m {
+		offset := indexi * len(m)
 		for indexj, j := range i {
-			num := offset + indexj + 1
-			if num == np.Size*np.Size {
-				return true
-			}
-			if int(j) != num {
+			if j != 0 && j != offset+indexj+1 {
 				return false
 			}
 		}
@@ -119,7 +110,7 @@ func Init(size int) (*NPuzzle, error) {
 	np := new(NPuzzle)
 	np.InitMatrix = getRandMatrix(size)
 	np.CurrMatrix = deepCopy(np.InitMatrix)
-	np.CurrX, np.CurrY = np.CurrMatrix.Pos()
+	np.CurrX, np.CurrY = np.CurrMatrix.posOf0()
 
 	//fmt.Printf("InitMatrix:    %p\n", &np.InitMatrix)
 	//fmt.Printf("CurrMatrix: %p\n", &np.CurrMatrix)

@@ -24,7 +24,7 @@ func main() {
 	}
 
 	fmt.Printf("--------%d Puzzle--------\n", n)
-	fmt.Printf("verbose: %t, n: %d, init pos: (%d, %d)\n", v, n, np.CurrX, np.CurrY)
+	fmt.Printf("verbose: %t, n: %d, init pos of 0: (%d, %d)\n", v, n, np.CurrX, np.CurrY)
 	fmt.Println("------------------------")
-	fmt.Println(np.String())
+	fmt.Println(np)
 }
