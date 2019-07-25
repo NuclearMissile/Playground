@@ -331,3 +331,5 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+/python_playground/pattern_recognition/.ipynb_checkpoints/
