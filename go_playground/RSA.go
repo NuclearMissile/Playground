@@ -34,7 +34,7 @@ func BigInt2String(n *big.Int) *string {
 func RSAEncrypt(plain *string, e, n *big.Int) (*big.Int, error) {
 	pAsBigInt := String2BigInt(plain)
 	if pAsBigInt.Cmp(n) >= 0 {
-		return nil, errors.New("Plain text too long. ")
+		return nil, errors.New("Plain text too long.")
 	}
 	return Mont.Exp(pAsBigInt, e, n), nil
 }
