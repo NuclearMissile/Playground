@@ -1,0 +1,54 @@
+{
+    "lr": [
+        "age",
+        "education",
+        "default",
+        "contact"
+    ],
+    "dt": [
+        "age",
+        "month"
+    ],
+    "rf": [
+        "age",
+        "month"
+    ],
+    "etc": [
+        "age",
+        "job"
+    ],
+    "xgb": [
+        "age",
+        "job",
+        "education",
+        "default",
+        "housing",
+        "loan",
+        "contact",
+        "month",
+        "day_of_week"
+    ],
+    "gbdt": [
+        "age",
+        "job",
+        "education",
+        "default",
+        "contact",
+        "month",
+        "day_of_week"
+    ],
+    "sgd": [
+        "age",
+        "default",
+        "contact"
+    ],
+    "ada": [
+        "age",
+        "job",
+        "education",
+        "default",
+        "contact",
+        "month",
+        "day_of_week"
+    ]
+}
