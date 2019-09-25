@@ -5,8 +5,9 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"github.com/NuclearMissile/Playground/go_playground/Mont"
 	"math/big"
+
+	"github.com/NuclearMissile/Playground/go_playground/Mont"
 )
 
 func String2BigInt(s *string) *big.Int {
@@ -34,7 +35,7 @@ func BigInt2String(n *big.Int) *string {
 func RSAEncrypt(plain *string, e, n *big.Int) (*big.Int, error) {
 	pAsBigInt := String2BigInt(plain)
 	if pAsBigInt.Cmp(n) >= 0 {
-		return nil, errors.New("Plain text too long.")
+		return nil, errors.New("Plain text is too long. ")
 	}
 	return Mont.Exp(pAsBigInt, e, n), nil
 }
@@ -57,16 +58,12 @@ func main() {
 	plainAsBigInt := String2BigInt(&plain)
 	fmt.Println("Plain text as number:")
 	fmt.Println(plainAsBigInt.String())
-
-	for i := 0; i < 50; i++ {
-		fmt.Println("=============\nEncrypted:")
-		encrypted, err := RSAEncrypt(&plain, e, n)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(encrypted.String())
-
-		fmt.Println("=============\nDecrypted:")
-		fmt.Println(*RSADecrypt(encrypted, d, n))
+	fmt.Println("=============\nEncrypted:")
+	encrypted, err := RSAEncrypt(&plain, e, n)
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(encrypted.String())
+	fmt.Println("=============\nDecrypted:")
+	fmt.Println(*RSADecrypt(encrypted, d, n))
 }
