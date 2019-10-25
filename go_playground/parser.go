@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/NuclearMissile/Playground/go_playground/parser"
 	"math"
+
+	"github.com/NuclearMissile/Playground/go_playground/parser"
 )
 
 func main() {
-	expr, err := parser.Parse("sin(pi/6)+ln(e)")
+	expr, err := parser.Parse("ln(e)")
 	fmt.Println(expr)
 	if err != nil {
 		fmt.Println(err)
